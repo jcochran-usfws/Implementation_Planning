@@ -1,0 +1,63 @@
+---
+format: pdf
+
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+- \usepackage{fancyhdr}
+- \pagenumbering{gobble}
+- \usepackage{hyperref}
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+
+execute: 
+  echo: false
+  warning: false
+  error: false
+
+params:
+  YEAR: 2024
+---
+
+```{r}
+#| label: Package Install and Data Import
+#| output: false
+
+source("..//data/Import_Packages_Data.R")
+```
+
+\begin{titlepage}
+
+\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{.25cm}
+\begin{flushleft}
+\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office}
+\newline
+\large\textbf{Aquatic Invasive Species Program}\vspace{.25cm}
+\newline
+\large\textit{Early Detection Monitoring Implementation Plan, Lake Erie and Lake Ontario `r params$YEAR`}\vspace{.25cm}
+
+\large\textbf{Program Overview}
+
+Aquatic invasive species pose a serious threat to the Great Lakes. That threat has prompted natural resource agencies to examine pathways of introduction and risks posed by priority species. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the \textit{Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes} identifying early detection as a priority action. The framework defines how the USFWS will carry out early detection efforts in high priority locations (HPL). HPLs are selected based on their increased likelihood for invasion. Sampling focuses on harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}. Results from the risk-based prioritization framework produce a ranking for each taxa that represents invasion risk at a location and is used to select and prioritize survey locations (Table 1). 
+
+```{r}
+#| HPL Rank Table
+
+hpl_tbl <- IP %>% 
+  select(Basin, Location, Fish = Fish.Rank, Invertebrate = Invert.Rank, `Priority*` = Priority) %>% 
+  arrange(Basin, `Priority*`) %>% 
+  kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority levels of the top ranked locations across the lower Great Lakes.",
+align = 'llccc') %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c(" " = 2, "Ranking out of 386 Locations" = 2, " " = 1)) %>%
+  kable_styling(latex_options = c("repeat_header")) %>% 
+  kable_styling(full_width = FALSE) %>%
+  kable_styling(font_size = 12) %>%
+  column_spec(1, bold=T) %>% 
+  #kable_styling(latex_options = "striped") %>%
+  collapse_rows(1, latex_hline = "major", valign = "top") %>% 
+  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework (fish and invertebrate), supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
+
+hpl_tbl
+```

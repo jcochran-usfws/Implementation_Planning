@@ -1,0 +1,149 @@
+---
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+- \usepackage{fancyhdr}
+- \pagenumbering{gobble}
+output:
+  pdf_document:
+    df_print: paged
+ 
+params:
+  YEAR: 2022
+---
+
+```{r Packages, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(maptools)
+library(maps)
+library(kableExtra)
+library(janitor)
+library(magrittr)
+options(knitr.kable.NA = '')
+library(ggrepel)
+library(sf)
+library(ggspatial)
+library(argosfilter)
+
+```
+
+```{r Data Fetch, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+IP <- read.csv("P:/Projects/ANS/GLRI/EDM/R Projects/Implementation Planning/data/projected_effort.csv",header=T)# Reads in the .CSV file from the folder path, change csv to update report
+
+```
+\begin{titlepage}
+
+\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{.25cm}
+\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office, Aquatic Invasive Species Program}\vspace{.25cm}
+\newline
+\large\textit{Early Detection and Monitoring Program Implementation Plan, 2022}\vspace{.50cm}
+\begin{flushleft}
+
+Aquatic invasive species pose a serious threat to the Great Lakes. That threat has prompted natural resource agencies to examine risks posed by priority species and pathways of introduction. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread. The U.S. Fish and Wildlife Service (USFWS) developed the proposed Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes identifying early detection as a priority action. The Framework defines how the USFWS will carry out early detection efforts in priority locations selected because of their increased likelihood for invasion.
+
+This report outlines implementation of the field elements of the Framework in Lake Erie and Lake Ontario during FY`r params$YEAR`. The work will be carried out by the USFWS' Lower Great Lakes Fish and Wildlife Conservation Office (LGLFWCO).
+
+
+```{r Map Prep, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE, results='hide'}
+
+## Read in shapefiles
+ Lake_sf <- st_read(
+  "P:/Projects/ANS/GLRI/EDM/R Projects/Other/Mapping/Great Lakes Shoreline/glgis_gl_shore_noaa_70k.shp")
+ cropped <- st_crop(Lake_sf, xmin = -73, xmax = -81,
+                                    ymin = 41.5, ymax = 45.4)
+ NY_sf <- st_read("P:/Projects/ANS/NYS Canal Prevention/GIS/NYS_Civil_Boundaries.shp/NYS_Civil_Boundaries_SHP/State_Shoreline.shp")
+
+ ## Create Sampling Locations
+
+points <- IP %>%
+  select(Location, x, y) %>%
+  group_by(Location) %>%
+  summarise(x,y)
+
+sites <- st_as_sf(points, coords = c("x", "y"), crs = 4326, agr = "constant")
+  
+```
+
+
+```{r Implementation Plan Site Location Map, echo=FALSE, results ='asis', message=FALSE, error=FALSE, warning=FALSE, fig.align="center", out.width = '75%', fig.cap="Locations for Juvenile/Adult, Metabarcoding, and Invertebrate sampling for the 2022 field season."} 
+ 
+## Plot Implementation Plan location map
+ 
+IP_map <- ggplot() + 
+   geom_sf(data = cropped, size = .5, color = "grey60") +
+  geom_sf(data = NY_sf, size = .5, color = "grey60", fill = NA) +
+  geom_sf(data = sites, size = 4, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
+  annotate(geom = "text", x = -78.1, y = 43.65, label = "Lake Ontario", 
+    fontface = "italic", color = "grey60", size = 3) +
+  annotate(geom = "text", x = -79.59, y = 42.65, label = "Lake Erie", 
+    fontface = "italic", color = "grey60", size = 2.5) +
+  coord_sf()+
+  geom_sf_text(data = sites, aes(label = Location), color = "black", size = 2.6, nudge_y = -.15)  +
+  annotation_scale(location = "bl", style = "ticks", line_col = "black", text_col = "black") +
+  theme(
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(colour="black"),
+        axis.text.y=element_text(colour="black"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5)
+  )
+
+IP_map
+ 
+```
+
+
+The objective of the Framework is early detection; therefore, sampling strategies are designed to detect rare or low abundance species. Generally, sampling for rare species involves collecting the entire suite of species known to inhabit a location using a variety of gear types that sample multiple habitats and depth strata. The objective of this implementation plan is to execute a multi-gear sampling strategy that maximizes the potential for detecting a newly introduced fish and benthic macroinvertebrate species in a complex aquatic system while it is still rare and geographically restricted.
+
+During the `r params$YEAR` field season, the following locations will be sampled (Figure 1): Buffalo, NY; Lewiston, NY (Lower Niagara River), Rochester, NY (Genesee River and Irondequoit Bay), Oswego, NY, and Messina, NY (St. Lawrence River). 
+
+Gear selection will be in accordance with habitat and depth alternatives at each site. Gear types for juvenile and adult fish are: boat electrofishing, fyke nets, mini-fyke nets, juvenile seines, gill nets, and bottom trawls. Gear specifically targeting  ichthyoplankton is limited to metabarcoding. The following  gear types  will be utilized for benthic macroinvertebrate sampling specifically targeting crayfish, amphipods, gastropods, and bivalves: rock bags, Hester-Dendys, petite ponars, crayfish seines, crayfish traps, and sweep nets. All gear will be used in accordance with the Recommended Sampling Gear Types and Standard Operating Procedures for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes.
+
+ The total proposed units of effort for juvenile/adult fish, metabarcoding, and benthic invertebrate sampling by each survey location can be found in Table 1.
+
+\end{flushleft}
+\fancypagestyle{ContactFooter}{%
+  \fancyhf{}
+  \renewcommand\headrulewidth{0pt}
+  \fancyfoot[L]{Questions related to the implementation plan can be directed to Zy Biesinger, Aquatic Invasive Species Program Lead, Lower Great Lakes Fish and Wildlife Conservation Office, Phone: 585-948-7046, Email: zy\_biesinger$@$fws.gov}
+}
+\thispagestyle{ContactFooter}
+\end{titlepage}
+\clearpage
+
+```{r Projected Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
+
+###### Summarise Data
+
+## Projected Effort Table
+
+names(IP)[5] <-"Juvenile/Adult"
+
+effort <- IP %>%
+  select("Location", "Juvenile/Adult", "Metabarcoding", "Invertebrates") %>%
+   replace(is.na(.), 0) %>%
+  mutate(Total = rowSums(.[2:4]) )%>% # Will need to adjust if/when sampling types change 
+  adorn_totals()
+
+#### Make Table for Effort projected for the field season
+
+efta_tbl <- kable(effort, format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Amount of effort proposed for each location for Juvenile/Adult fish, Metabarcoding, and Benthic Invertebrates.",
+align = 'lcccc', col.names = c("Locations", "Juvenile/Adult", "Metabarcoding", "Invertebrates*", "Totals")) %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c(" " = 1, "Fish Surveys" = 2, " " = 2)) %>%
+  kable_styling(latex_options = c("repeat_header")) %>% 
+  kable_styling(full_width = FALSE) %>%
+  kable_styling(font_size = 12) %>%
+  kable_styling(latex_options = "striped") %>%
+  collapse_rows(columns = 1) %>%
+  footnote(symbol = c("Invertebrate sampling includes crayfish and expanded marina sampling.")) 
+
+efta_tbl
+
+```

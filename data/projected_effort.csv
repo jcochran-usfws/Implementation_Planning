@@ -1,0 +1,31 @@
+Location,y,x,Basin,Fish Rank,Invert Rank,Priority,Purpose,Juvenile/Adult,Metabarcoding,Invertebrates,Electrofish,Fyke Net,Gill Net,Rock Bags,Sweep Net
+"Buffalo, NY",42.87565981,-78.87594958,Lake Erie,3,8,High,Early Detection Monitoring,40,20,20,20,10,10,10,10
+"Rochester, NY",43.253932,-77.57327,Lake Ontario,5,16,High,Early Detection Monitoring,60,20,20,30,15,15,10,10
+"Oswego, NY",43.463629,-76.5206,Lake Ontario,6,22,High,Early Detection Monitoring,40,,20,20,5,15,10,10
+"Erie, PA",42.13624552,-80.09979865,Lake Erie,27,25,Moderate,Early Detection Monitoring,40,,20,20,10,10,10,10
+"North Tonawanda, NY",43.03573914,-78.84214346,Lake Erie,29,46,Moderate,Early Detection Monitoring,40,20,,10,10,10,,
+"Grand Island, NY",43.02758354,-78.98874301,Lake Erie,54,67,Moderate,Early Detection Monitoring,40,20,,20,20,,,
+"Sodus Point, NY",43.2648911,-76.98096074,Lake Ontario,57,64,Moderate,Early Detection Monitoring,,20,,,,,,
+"Dunkirk, NY",42.48772178,-79.33188668,Lake Erie,76,77,Moderate,Early Detection Monitoring,,20,,,,,,
+"Massena, NY",45.002239,-74.792409,Lake Ontario,124,189,High,Targeted,60,125,,60,,,,
+"Massena, NY",45.002239,-74.792409,Lake Ontario,124,189,Low,Early Detection Monitoring,,,,,,,,
+"Irving, NY",42.56755934,-79.1154136,Lake Erie,94,126,Low,Early Detection Monitoring,,10,,,,,,
+"Erie, PA",42.13624552,-80.09979865,Lake Erie,27,25,Moderate,Targeted,,,,,,,,
+"Dunkirk, NY",42.48772178,-79.33188668,Lake Erie,76,77,Moderate,Targeted,,,,,,,,
+"Irving, NY",42.56755934,-79.1154136,Lake Erie,94,126,High,Targeted,,,,,,,,
+"Buffalo, NY",42.87565981,-78.87594958,Lake Erie,3,8,High,Targeted,,,,,,,,
+"North Tonawanda, NY",43.03573914,-78.84214346,Lake Erie,29,46,High,Targeted,,,,,,,,
+"Lower Niagara, NY",43.233587,-79.054097,Lake Ontario,81,86,Medium,Targeted,,,,,,,,
+"18 Mile Creek, NY",43.33813,-78.718518,Lake Ontario,,,High,Targeted,,,,,,,,
+"Oak Orchard, NY",43.364257,-78.192469,Lake Ontario,84,101,High,Targeted,,,,,,,,
+"Braddock Bay, NY",43.307337,-77.717063,Lake Ontario,5,16,Low,Targeted,,,,,,,,
+"Genessee River, NY",43.25521,-77.605848,Lake Ontario,5,16,High,Targeted,,,,,,,,
+"Irondequoit Bay, NY",43.231556,-77.531814,Lake Ontario,5,16,Medium,Targeted,,,,,,,,
+"Sodus Bay, NY",43.265536,-76.967893,Lake Ontario,56,58,Medium,Targeted,,,,,,,,
+"Port Bay, NY",43.300779,-76.836209,Lake Ontario,,,Low,Targeted,,,,,,,,
+"Little Sodus Bay, NY",43.330715,-76.705863,Lake Ontario,,,Low,Targeted,,,,,,,,
+"Oswego, NY",43.464136,-76.521203,Lake Ontario,6,22,Medium,Targeted,,,,,,,,
+"Salmon River Estuary, NY",43.569086,-76.203276,Lake Ontario,,,High,Targeted,,,,,,,,
+"Lower Niagara, NY",43.233587,-79.054097,Lake Ontario,81,86,,Early Detection Monitoring,,,,,,,,
+"Oak Orchard, NY",43.364257,-78.192469,Lake Ontario,84,101,,Early Detection Monitoring,,,,,,,,
+"Thousand Islands, NY",44.250826,-76.087418,Lake Ontario,,,,Early Detection Monitoring,,,,,,,,

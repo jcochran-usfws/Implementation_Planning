@@ -1,0 +1,165 @@
+---
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+- \usepackage{fancyhdr}
+- \pagenumbering{gobble}
+- \usepackage{hyperref}
+output:
+  pdf_document:
+    df_print: paged
+  word_document: default
+params:
+  YEAR: 2024
+---
+
+```{r Packages, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(maptools)
+library(maps)
+library(kableExtra)
+library(janitor)
+library(magrittr)
+options(knitr.kable.NA = '')
+library(ggrepel)
+library(sf)
+library(ggspatial)
+library(argosfilter)
+library(here)
+```
+
+```{r Data Fetch, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE}
+IP <- read.csv(here("data", "projected_effort.csv"), header=T) # Reads in the .CSV file from the folder path, change csv to update report
+HPL_Ranks <- read.csv(here("data", "projected_effort.csv"), header=T) # Updated site prioritization HPL rank by taxa
+```
+
+\begin{titlepage}
+
+\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{.25cm}
+\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office, Aquatic Invasive Species Program}\vspace{.25cm}
+\newline
+\large\textit{Early Detection Monitoring Implementation Plan, `r params$YEAR`}\vspace{.50cm}
+\begin{flushleft}
+
+Aquatic invasive species pose a serious threat to the Great Lakes. That threat has prompted natural resource agencies to examine pathways of introduction and risks posed by priority species. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the \textit{Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes} identifying early detection as a priority action. The framework defines how the USFWS will carry out early detection efforts in high priority locations (HPL). HPLs are selected based on their increased likelihood for invasion. Sampling will focus on harbors and rivers of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}.
+
+This report outlines implementation of the field elements of the Framework in Lake Erie and Lake Ontario during `r params$YEAR`. The proposed work will be carried out by the USFWS's Lower Great Lakes Fish and Wildlife Conservation Office (LGLFWCO).
+
+
+```{r Map Prep, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE, results='hide'}
+
+## Read in shapefiles
+
+ Lake_sf <- st_read(here("shapefiles/GL_Outline", "glgis_gl_shore_noaa_70k.shp"))
+ cropped <- st_crop(Lake_sf, xmin = -73, xmax = -81,
+                                    ymin = 41.5, ymax = 45.4)
+ NY_sf <- st_read(here("shapefiles/NYS_Civil_Boundaries.shp/NYS_Civil_Boundaries_SHP",  "State_Shoreline.shp"))
+ 
+ US_sf <- st_read(here("shapefiles/States_shapefile", "States_shapefile.shp")) %>% 
+   filter(State_Code %in% c('PA'))
+ #US_cropped <- st_crop(US_sf, xmin = -73, xmax = -81, ymin = 41.5, ymax = 45.4)
+ 
+ ## Create Sampling Locations
+
+points <- IP %>%
+  select(Location, x, y) %>%
+  group_by(Location) %>%
+  summarise(x,y)
+
+sites <- st_as_sf(points, coords = c("x", "y"), crs = 4326, agr = "constant")
+  
+```
+
+
+```{r Implementation Plan Site Location Map, echo=FALSE, results ='asis', message=FALSE, error=FALSE, warning=FALSE, fig.align="center", out.width = '75%', fig.cap="Locations for Juvenile/Adult, Metabarcoding, and Invertebrate sampling for the 2023 field season."} 
+ 
+## Plot Implementation Plan location map
+ 
+IP_map <- ggplot() + 
+  geom_sf(data = cropped, size = .5, color = "grey60") +
+  geom_sf(data = NY_sf, size = .5, color = "grey60", fill = NA) +
+  geom_sf(data = US_sf, size = .5, color = "grey60", fill = NA) +
+  geom_sf(data = sites, size = 4, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
+  annotate(geom = "text", x = -78.1, y = 43.65, label = "Lake Ontario", 
+    fontface = "italic", color = "grey60", size = 3) +
+  annotate(geom = "text", x = -79.59, y = 42.65, label = "Lake Erie", 
+    fontface = "italic", color = "grey60", size = 2.5) +
+  coord_sf()+
+  geom_sf_text(data = sites, aes(label = Location), color = "black", size = 2.6, nudge_y = -.15)  +
+  annotation_scale(location = "bl", style = "ticks", line_col = "black", text_col = "black") +
+  theme(
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(colour="black"),
+        axis.text.y=element_text(colour="black"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5)
+  )
+
+IP_map
+ 
+```
+
+
+The objective of the framework is early detection; therefore, sampling strategies are designed to detect rare or low abundance species. Generally, sampling for rare species involves collecting the entire suite of species known to inhabit a location using a variety of gear types that sample multiple habitats and depth strata. The objective of this implementation plan is to execute a multi-gear sampling strategy that maximizes the potential for detecting a newly introduced fish or benthic macroinvertebrate species in a complex aquatic system while it is still rare and geographically restricted. This surveillance strategy uses both traditional (active and passive fisheries gear) and genetic (eDNA) methods to identify species presence across the various communities.
+
+During the `r params$YEAR` early detection monitoring field season, the following locations will be sampled (Figure 1): Buffalo, NY (Buffalo Harbor and Upper Niagara River); Lewiston, NY (Lower Niagara River), Rochester, NY (Genesee River and Irondequoit Bay), Oswego, NY, and Massena, NY (St. Lawrence River). The total proposed units of effort for juvenile/adult fish, metabarcoding, and benthic invertebrate sampling by each survey location can be found in Table 1. Gear will be used in accordance with the \textit{Recommended Sampling Gear Types and Standard Operating Procedures for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes}. Gear allocation will also be explored as we begin to scrutinize the optimal ratios for HPL.  
+
+Alongside the routine surveillance efforts of our early detection monitoring program, there are a few projects that will be undertaken that are worth mentioning:
+\begin{enumerate}
+\item Further support of the Buffalo Park Schools Red Swamp Crayfish (\textit{Procambarus clarkii}) infestation will result in a few days of effort around the perimeter of the known established population to determine any potential spread.  
+
+\item Following last years metabarcoding efforts, a more comprehensive eDNA study will be conducted in Presque Isle Bay (Erie, PA) in collaboration with the Alpena FWCO. This study will primarily address metabarcoding methodology questions that will guide the implementation of this new AIS detection tool. 
+
+\item Another round of eDNA samples will be collected in the Massena, NY area of the St. Lawrence River as part of continued Tench surveillance efforts. The samples collected in 2022 are pending processing and information resulting from those samples will help focus sampling effort above, below, and within the Wiley-Dondero Canal. 
+\end{enumerate}
+
+\end{flushleft}
+\fancypagestyle{ContactFooter}{%
+  \fancyhf{}
+  \renewcommand\headrulewidth{0pt}
+  \fancyfoot[L]{Questions related to the implementation plan can be directed to Zy Biesinger, Aquatic Invasive Species Program Lead, Lower Great Lakes Fish and Wildlife Conservation Office, Phone: 585-948-7046, Email: zy\_biesinger$@$fws.gov}
+}
+\thispagestyle{ContactFooter}
+\end{titlepage}
+\clearpage
+
+```{r Projected Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
+
+###### Summarise Data
+
+## Projected Effort Table
+
+names(IP)[5] <- "Juvenile/Adult"
+
+effort <- IP %>%
+  select("Location", "Juvenile/Adult", "Metabarcoding", "Invertebrates") %>%
+  replace(is.na(.), 0) %>%
+  mutate(Total = rowSums(.[2:4]) )%>% # Will need to adjust if/when sampling types change 
+  adorn_totals() %>% 
+  rename(Traditional = "Juvenile/Adult")
+
+#### Make Table for Effort projected for the field season
+
+#colnames(effort)[3] <- paste0("Metabarcoding", footnote_marker_alphabet(1))
+#colnames(effort)[4] <- paste0("Invertebrates", footnote_marker_alphabet(2))
+
+efta_tbl <- kable(effort, format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Amount of effort proposed for each high priority location for Juvenile/Adult fish, Metabarcoding, and Benthic Invertebrates.",
+align = 'lcccc') %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c(" " = 1, "Fish Surveys" = 2, " " = 2)) %>%
+  kable_styling(latex_options = c("repeat_header")) %>% 
+  kable_styling(full_width = FALSE) %>%
+  kable_styling(font_size = 12) %>%
+  kable_styling(latex_options = "striped") %>%
+  collapse_rows(columns = 1) %>%
+  footnote(general = "Metabarcoding effort denotes the number of water samples to be collected including field blanks. Invertebrate surveys include both crayfish and non-crayfish invertebrates (Amphipods, Gastropods, and Bivalves).", threeparttable = T) 
+
+efta_tbl
+
+```
