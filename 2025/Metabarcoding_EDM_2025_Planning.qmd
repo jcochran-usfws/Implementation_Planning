@@ -24,40 +24,209 @@ params:
 #| label: Package Install and Data Import
 #| output: false
 
-source("..//data/Import_Packages_Data.R")
+source("../data/Import_Packages_Data.R")
 ```
 
-\begin{titlepage}
-
-\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{.25cm}
+\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{-.15cm}
 \begin{flushleft}
-\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office}
+\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office}\vspace{.15cm}
 \newline
-\large\textbf{Aquatic Invasive Species Program}\vspace{.25cm}
+\large\textit{Aquatic Invasive Species Program}\vspace{.15cm}
 \newline
-\large\textit{Early Detection Monitoring Implementation Plan, Lake Erie and Lake Ontario `r params$YEAR`}\vspace{.25cm}
+\large\textbf{Early Detection Monitoring Metabarcoding Surviellance}\vspace{.25cm}
 
-\large\textbf{Program Overview}
+\large\textbf{Program Objective}
 
-Aquatic invasive species pose a serious threat to the Great Lakes. That threat has prompted natural resource agencies to examine pathways of introduction and risks posed by priority species. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the \textit{Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes} identifying early detection as a priority action. The framework defines how the USFWS will carry out early detection efforts in high priority locations (HPL). HPLs are selected based on their increased likelihood for invasion. Sampling focuses on harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}. Results from the risk-based prioritization framework produce a ranking for each taxa that represents invasion risk at a location and is used to select and prioritize survey locations (Table 1). 
+Describe program purpose. HPLs are selected based on their increased likelihood for invasion. Sampling focuses on harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}. 
+
+Touch on following:
+\begin{enumerate}
+\item Describe EMD program. 
+\item Describe what metabarcoding is?
+\item How priority for each purpose (EDM vs Targeted) is chosen.
+\item Partnerships and objectives of 2024 sampling.
+\end{enumerate}
+
+\end{flushleft}
+
+\newpage
 
 ```{r}
-#| HPL Rank Table
+#| label: EDM Priority Location Map
+#| output: asis
+#| eval: true
+#| fig-height: 7.5
+#| fig-width: 9.5
+#| fig-cap: "Map of broad-spectrum AIS monitoring locations across the lower Great Lakes with their corresponding priority level (Red: High, Orange: Moderate, Blue: Low)."
+ 
+ ## Create Sampling Locations
 
-hpl_tbl <- IP %>% 
-  select(Basin, Location, Fish = Fish.Rank, Invertebrate = Invert.Rank, `Priority*` = Priority) %>% 
+points <- metaB %>%
+  filter(Purpose == "Early Detection Monitoring") %>% 
+  select(Location, Priority, x, y)
+
+sites <- st_as_sf(points, coords = c("x", "y"), crs = 4326, agr = "constant")
+
+## Plot location map
+ 
+Priority_map <- ggplot() + 
+  geom_sf(data = cropped, size = .5, color = "grey60") +
+  geom_sf(data = NY_sf, size = .5, color = "grey60", fill = NA) +
+  #geom_sf(data = US_sf, size = .5, color = "grey60", fill = NA) +
+  #geom_sf(data = sites, size = 3, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
+  geom_point(data = points, aes(x = x, y = y, color = Priority), size = 3, stroke = 1.25, alpha = .65) +
+  scale_color_manual(values=c("#fa0a0a","#f5ad37", "#2bd2e9")) +
+  geom_text_repel(data = points, aes(x = x, y = y, label = Location), size = 3.2, point.padding = 1, max.overlaps = Inf) + 
+  annotate(geom = "text", x = -78.1, y = 43.65, label = "Lake Ontario", 
+    fontface = "italic", color = "grey60", size = 3) +
+  annotate(geom = "text", x = -79.59, y = 42.65, label = "Lake Erie", 
+    fontface = "italic", color = "grey60", size = 2.5) +
+  coord_sf()+
+  #geom_sf_text(data = sites, aes(label = Location), color = "black", size = 2.6, nudge_y = -.15)  +
+  annotation_scale(location = "bl", style = "ticks", line_col = "black", text_col = "black") +
+  theme(
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(colour="black"),
+        axis.text.y=element_text(colour="black"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5)
+  )
+
+Priority_map
+```
+
+\newpage
+\blandscape
+
+```{r}
+#| label: EDM Table
+#| output: asis
+#| eval: true
+
+# Pack Rows 
+basin_rows <- metaB %>% 
+  filter(Purpose == "Early Detection Monitoring") %>%
+  group_by(Basin, Location) %>% 
+  summarise() %>% 
+  ungroup() %>% 
+  count(Basin, name = "Rows")
+
+# Generate table
+
+EDM_tbl <- metaB %>% 
+  filter(Purpose == "Early Detection Monitoring") %>% 
+  rename("Priority*" = Priority, "FWS Only" = Metabarcoding_fws, "FWS & Partners" = Metabarcoding_all) %>% 
   arrange(Basin, `Priority*`) %>% 
-  kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority levels of the top ranked locations across the lower Great Lakes.",
-align = 'llccc') %>%
+  select(-Basin, -x, -y, -Purpose, -Target_Species, -Partnerships) %>% 
+  #select(2, 1, 3, 4, 5, 6) %>% 
+  adorn_totals(,,,,-`Fish Rank`) %>% 
+  kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority broad-spectrum AIS monitoring locations across the lower Great Lakes.", align = 'lcccc') %>%
   kable_styling(latex_options = "hold_position") %>%
-  add_header_above(c(" " = 2, "Ranking out of 386 Locations" = 2, " " = 1)) %>%
+  add_header_above(c(" " = 1, "Ranking out of 388 Locations" = 2, "eDNA Sample Capacity Scenarios" = 2)) %>%
   kable_styling(latex_options = c("repeat_header")) %>% 
   kable_styling(full_width = FALSE) %>%
   kable_styling(font_size = 12) %>%
-  column_spec(1, bold=T) %>% 
+  #column_spec(1, bold=T) %>% 
   #kable_styling(latex_options = "striped") %>%
-  collapse_rows(1, latex_hline = "major", valign = "top") %>% 
-  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework (fish and invertebrate), supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
+  #collapse_rows(1, latex_hline = "major", valign = "top") %>% 
+  pack_rows(index=c("Lake Erie" = pluck(basin_rows, 2, 1), "Lake Ontario" = pluck(basin_rows, 2, 2))) %>%
+  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework.", threeparttable = T) 
 
-hpl_tbl
+EDM_tbl
 ```
+\elandscape
+\newpage
+
+```{r}
+#| label: Target Priority Location Map
+#| output: asis
+#| eval: true
+#| fig-height: 7.5
+#| fig-width: 9.5
+#| fig-cap: "Map of targeted AIS species specific locations across the lower Great Lakes with their corresponding priority level (Red: High, Orange: Moderate, Blue: Low)."
+ 
+ ## Create Sampling Locations
+
+points <- metaB %>%
+  filter(Purpose == "Targeted") %>% 
+  select(Location, Priority, x, y)
+
+sites <- st_as_sf(points, coords = c("x", "y"), crs = 4326, agr = "constant")
+
+## Plot location map
+ 
+Target_map <- ggplot() + 
+  geom_sf(data = cropped, size = .5, color = "grey60") +
+  geom_sf(data = NY_sf, size = .5, color = "grey60", fill = NA) +
+  #geom_sf(data = US_sf, size = .5, color = "grey60", fill = NA) +
+  #geom_sf(data = sites, size = 3, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
+  geom_point(data = points, aes(x = x, y = y, color = Priority), size = 3, stroke = 1.25, alpha = .65) +
+  scale_color_manual(values=c("#fa0a0a","#f5ad37", "#2bd2e9")) +
+  geom_text_repel(data = points, aes(x = x, y = y, label = Location), size = 3.2, point.padding = 1, max.overlaps = Inf) + 
+  annotate(geom = "text", x = -78.1, y = 43.65, label = "Lake Ontario", 
+    fontface = "italic", color = "grey60", size = 3) +
+  annotate(geom = "text", x = -79.59, y = 42.65, label = "Lake Erie", 
+    fontface = "italic", color = "grey60", size = 2.5) +
+  coord_sf()+
+  #geom_sf_text(data = sites, aes(label = Location), color = "black", size = 2.6, nudge_y = -.15)  +
+  annotation_scale(location = "bl", style = "ticks", line_col = "black", text_col = "black") +
+  theme(
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(colour="black"),
+        axis.text.y=element_text(colour="black"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5)
+  )
+
+Target_map
+```
+
+\newpage
+\blandscape
+
+```{r}
+#| label: Targeted Table
+#| output: asis
+#| eval: true
+
+# Pack Rows 
+basin_rows <- metaB %>% 
+  filter(Purpose == "Targeted") %>%
+  group_by(Basin, Location) %>% 
+  summarise() %>% 
+  ungroup() %>% 
+  count(Basin, name = "Rows")
+
+# Generate table
+
+Target_tbl <- metaB %>% 
+  filter(Purpose == "Targeted") %>% 
+  rename("Priority*" = Priority, "FWS Only" = Metabarcoding_fws, "FWS & Partners" = Metabarcoding_all, "Target Species" = Target_Species) %>% 
+  arrange(Basin, `Priority*`) %>% 
+  select(-Basin, -x, -y, -Purpose, -`Fish Rank`) %>% 
+  select(1,2,3,4,6,5) %>% 
+  adorn_totals() %>% 
+  kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority targeted species-specific AIS monitoring locations across the lower Great Lakes.", align = 'lcccll') %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c(" " = 2, "eDNA Sample Capacity Scenarios" = 2, " " = 2)) %>%
+  kable_styling(latex_options = c("repeat_header")) %>% 
+  kable_styling(full_width = FALSE) %>%
+  kable_styling(font_size = 12) %>%
+  #column_spec(1, bold=T) %>% 
+  #kable_styling(latex_options = "striped") %>%
+  collapse_rows(5, latex_hline = "major", valign = "top") %>% 
+  pack_rows(index=c("Lake Erie" = pluck(basin_rows, 2, 1), "Lake Ontario" = pluck(basin_rows, 2, 2))) %>%
+  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework.", threeparttable = T) 
+
+Target_tbl
+```
+
+\elandscape
