@@ -37,37 +37,31 @@ source("../data/Import_Packages_Data.R")
 
 \large\textbf{Program Objective}
 
-Aquatic invasive species pose a serious threat to the Great Lakes. That threat has prompted natural resource agencies to examine pathways of introduction and risks posed by priority species. Prevention, early detection, and rapid response provide the most
-effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes identifying early detection as a priority action. The framework defines how the USFWS will carry out early detection
-efforts in high priority locations (HPL). HPLs are selected based on their increased likelihood for invasion. Sampling focuses on harbors, rivers, and embayments of the Great Lakes as determined by a risk-based prioritization framework for Aquatic Invasive Species (AIS) in the Great Lakes. Results from the risk-based prioritization framework produce a ranking for each taxa that represents invasion risk at a location and is used to select and prioritize survey locations (Table 1).
+Aquatic invasive species (AIS) pose a serious threat to the Great Lakes. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the Strategic Framework for the Early Detection of Non-native Fishes in the Great Lakes identifying early detection as a priority action. The objective of the Early Detection and Monitoring (EDM) program is to detect novel invasive species and document AIS range expansions while populations are low and geographically isolated - providing management actions a better opportunity of success. 
 
-Describe program purpose. HPLs are selected based on their increased likelihood for invasion. Sampling focuses on harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}. 
+\large\textbf{Metabarcoding Implementation}
 
-\large\textbf{Metabarcoding Efforts}
+Along with traditional fisheries surveys (electrofishing and netting), molecular surveillance using environmental DNA (eDNA) has proven to be a valuable tool in AIS monitoring. Metabarcoding, a multi-taxa eDNA method, now allows for fish community level surveillance across a broad range of species, both native, non-native, and AIS watchlist. The USFWS will be implementing a annual metabarcoding AIS surveillance program that will monitor both broad-spectrum AIS watchlist species and targeted species-specific AIS of interest. Objectives for both surveillance purposes are defined as follows:
 
-The objective of early detection and monitoring surveillance is to detect rare and low abundance species. Utilizing new and developing technologies is necessary to reach early detection and monitoring goals. Environmental DNA (eDNA) is a molecular tool that can be utilized in the detection of AIS. The USFWS Great Lakes early detection and motioning program is incorporating metabarcoding, a mutli-species eDNA tool, into routine monitoring efforts. Metabarcoding sampling will target both HPLs and targeted areas for AIS of interest, like grass carp and tench.
+\begin{itemize}
+\item\textbf{Broad-Spectrum:} Monitoring will focus on AIS watchlist species across high priority locations (HPLs) comprised of harbors, rivers and embayments of the lower Great Lakes as determined by a harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based            prioritization framework for Aquatic Invasive Species (AIS) in the Great Lakes basin} (Figure 1). Highest priority HPLs will     get the largest sample efforts, with sample allocations trickling down across the other lower ranked priority sites (Table 1). 
+\item\textbf{Species-Specific:} Monitoring will also focus on particular AIS species while still employing a multi-taxa approach (Figure 2; Table 2). 
+\begin{itemize}
+\item\textbf{Tench} (\textit{Tinca tinca}), an Eurasian cyprinid, will have continued eDNA monitoring along the invasion front in the Massena, NY region of St. Lawrence River. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front. 
+\item\textbf{Grass Carp} (\textit{Ctenopharyngodon idella}), an Asian cyprinid, will have continued and expanded effort across areas within Lake Ontario and Eastern Lake Erie. Sampling areas were selected based off high priority designation and locations that had habitat conditions preferred by grass carp.
+\end{itemize}
+\end{itemize}
 
-Metabarcoding surveillance in HPLS will be divided up between high, moderate, and low ranked areas. Highest ranked areas will get the highest sampling effort, with effort allocations trickling down across the other lower ranked priority sites. Priority rankings for HPLs can be found in Table 1.
+\large\textbf{Recapping 2024 Metabarcoding Efforts}
 
-In addition to HPL surveillance efforts, targeted effort will also be conducted for the following species in the following areas:
-
-1. Metabarcoding efforts for Tench (*Tinca tinca*) in the Massena, NY region of St. Lawrence River will continue in 2025. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front.
-
-2. Metabarcoding efforts will continue and be expanded across Lake Ontario and Eastern Lake Erie for Grass carp (*Ctenopharyngodon idella*). Sampling areas were selected based off high priority designation and locations that had habitat conditions preferred by grass carp. Priority rankings and effort allocations can be found in Table 2 for both species.
-
-\large\textbf{2024 Efforts}
-
-Touch on following:
-\begin{enumerate}
-\item Describe EMD program. 
-\item Describe what metabarcoding is?
-\item How priority for each purpose (EDM vs Targeted) is chosen.
-\item Partnerships and objectives of 2024 sampling.
-\end{enumerate}
+Partnerships and objectives from last field season to inform fture partners of past goals and partner involvement.
 
 \end{flushleft}
 
 \newpage
+
+\large\textbf{Broad-Spectrum AIS Surviellance}
+\vspace{1.5cm}
 
 ```{r}
 #| label: EDM Priority Location Map
@@ -158,6 +152,9 @@ EDM_tbl
 ```
 \elandscape
 \newpage
+
+\large\textbf{Species-Specfifc Targeted AIS Surviellance}
+\vspace{1.5cm}
 
 ```{r}
 #| label: Target Priority Location Map
