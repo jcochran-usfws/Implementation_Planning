@@ -41,7 +41,7 @@ Aquatic invasive species (AIS) pose a serious threat to the Great Lakes. Prevent
 
 \large\textbf{Metabarcoding Implementation}
 
-Along with traditional fisheries surveys (electrofishing and netting), molecular surveillance using environmental DNA (eDNA) has proven to be a valuable tool in AIS monitoring. Metabarcoding, a multi-taxa eDNA method, now allows for fish community level surveillance across a broad range of species, both native, non-native, and AIS watchlist. The USFWS will be implementing a annual metabarcoding AIS surveillance program that will monitor both broad-spectrum AIS watchlist species and targeted species-specific AIS of interest. Objectives for both surveillance purposes are defined as follows:
+Along with traditional fisheries surveys (electrofishing and netting), molecular surveillance using environmental DNA (eDNA) has proven to be a valuable tool in AIS monitoring. Metabarcoding, a multi-taxa eDNA method, now allows for fish community level surveillance across a broad range of species, both native, non-native, and AIS watchlist. The USFWS will be implementing an annual metabarcoding AIS surveillance program that will monitor both broad-spectrum AIS watchlist species and targeted species-specific AIS of interest. Objectives for both surveillance purposes are defined as follows:
 
 \begin{itemize}
 \item\textbf{Broad-Spectrum:} Monitoring will focus on AIS watchlist species across high priority locations (HPLs) comprised of harbors, rivers and embayments of the lower Great Lakes as determined by a harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based            prioritization framework for Aquatic Invasive Species (AIS) in the Great Lakes basin} (Figure 1). Highest priority HPLs will     get the largest sample efforts, with sample allocations trickling down across the other lower ranked priority sites (Table 1). 
@@ -54,7 +54,11 @@ Along with traditional fisheries surveys (electrofishing and netting), molecular
 
 \large\textbf{Recapping 2024 Metabarcoding Efforts}
 
-Partnerships and objectives from last field season to inform fture partners of past goals and partner involvement.
+In 2024, metabarcoding was implemented on a small scale in high and lower priority locations in Lake Ontario and Eastern Lake Erie. High priority locations were areas where traditional sampling was occurring and data from traditional gear could be compared to metabarcoding results. Lower priority HPLs were areas where no traditional surveillance has been done and therefore metabarcoding was going to be used as a surveillance method for novel AIS. Work was supported through partnerships with the New York Department of Environmental Conservation (NYSDEC) and the USFWS New York Field Office (NYFO). NYSDEC collected samples in Cattaraugus Creek and Dunkirk Harbor, while NYFO collected samples for targeted tench effort on the St. Lawrence River near Massena, NY.
+
+In addition to sampling across the Lower Great Lakes landscape, a contamination study was conducted to gain an understanding for the contamination risk when conducting eDNA sampling. Ideally, collecting eDNA samples from a vessel that is also concurrently conducting traditional surveys would be an efficient way to combine techniques, but contamination in this “dirty” boat environment is a concern. This small study used eDNA field blanks collected from non-sterile boats to determine the amount of contamination risk associated with sampling from “dirty” vessels. Results from this study will help inform our utilization of this tool in conjunction with traditional gears. 
+
+\large\textbf{2025 Partnership Involvement}
 
 \end{flushleft}
 
