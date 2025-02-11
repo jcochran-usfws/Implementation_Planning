@@ -60,6 +60,12 @@ In addition to sampling across the Lower Great Lakes landscape, a contamination 
 
 \large\textbf{2025 Partnership Involvement}
 
+In 2025 the Lower Great Lakes Fish and Wildlife Conservation Office (LGLFWCO) is looking for partners to assist in metabarcoding sample collection. Locations requiring assistance along with number of samples to be collected by partners can be found in Tables 1 and 2. Partners should review the tables and determine if they have capacity to assist and if any of the locations selected are of interest to their office for AIS or other species purposes. Data from samples collected by partners will be shared when data is available.
+
+If partners have interest in other water bodies in the Great Lakes basin for AIS those areas could potentially be sampled if they align with the LGLFWCOs EDM programmatic goals. If there are additional partner requests the LGLFWCO will review those requests, determine if the areas requested align with programmatic objectives, and readjust sample allocations as needed. Extra areas requested that are not selected for sampling this year can be re-evaluated for future years sampling.
+
+For partners willing to assist with sampling efforts in 2025, the LGLFWCO will provide materials for collection, including: filters, a smith-root sampling unit, and a step by step field SOP. Training opportunities can also be provided if requested. A Field Map and Survey123 form have already been set up for this program and will be utilized for sample collection. A copy of the SOP for the current data workflow can be found here: \href{https://fws.maps.arcgis.com/home/item.html?id=050217d0979e4fbdac761d660023a4e2}
+
 \end{flushleft}
 
 \newpage
