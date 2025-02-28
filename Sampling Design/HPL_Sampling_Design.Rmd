@@ -1,0 +1,273 @@
+---
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+- \usepackage{fancyhdr}
+- \pagenumbering{gobble}
+- \usepackage{hyperref}
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+
+output:
+  pdf_document:
+    df_print: paged
+    
+params:
+  Year: 2024
+  EDM_HPL: "Grand Island, NY"
+  EF_Points: 20
+  FY_Points: 20
+  MF_Points: 0
+  GN_Points: 0
+  MB_Points: 20
+  RB_Points: 0
+  SN_Points: 0
+  Map_Zoom_Level: 9.95 # Reference: Oswego, NY (12.75), Erie, PA (11.55), Buffalo, NY (10.45), North Tonawanda, NY (10.55), Sodus Point, NY (11.10), Rochester, NY (?), Grand Island, NY (9.95) 
+---
+
+```{r Package Install and Import, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'hide'}
+
+## Install and load packages
+
+# Create vector of packages
+
+requiredPackages <- c("tidyverse", "lubridate", "janitor", "arcgisbinding", "sf", "sp", "pbapply", "spatialEco", "ggspatial", "ggrepel", "ggmap", "here", "units", "sfheaders", "rnaturalearth", "ggmap", "basemaps", "arcgis")
+
+# Function to install and load any packages not installed
+
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg))
+  install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+
+# Load packages
+
+ipak(requiredPackages)
+```
+
+```{r Import Shapefile Layer, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'hide', cache=FALSE}
+
+arc.check_product() ### Checks ArcGIS licensing ---> Must have a offline version of this license
+
+### Pull polygons from AGOL Feature Layer
+
+HPL_Stratified_Polys <- arc.open("https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/HPL_Stratified_Random_Sample_Design/FeatureServer/0") 
+
+### Converts attribute table into dataframe and Filters by HPL
+
+HPL_Stratified_tbl <- arc.select(HPL_Stratified_Polys, names(HPL_Stratified_Polys@fields), where_clause = paste0("High_Priority_Location=", paste("'", params$EDM_HPL, "'", sep = ""), sep = ""))
+
+HPL_sp <- arc.data2sp(HPL_Stratified_tbl)
+
+HPL_sf <- st_as_sf(HPL_sp, coords = c("longitude", "latitude")) 
+
+HPL_sf_4326 <- st_transform(HPL_sf, crs = 4326)
+
+HPL_sf_3857 <- st_transform(HPL_sf, crs = 3857)
+
+### High Diversity Fixed Survey Sites
+
+HDS_Fixed_Points <- arc.open("https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/EDM_High_Diversity_Fixed_Survey_Sites/FeatureServer/0") 
+
+HDS_Fixed_tbl <- arc.select(HDS_Fixed_Points, names(HDS_Fixed_Points@fields), where_clause = paste0("High_Priority_Location=", paste("'", params$EDM_HPL, "'", sep = ""), sep = ""))
+
+HDS_Fixed_sp <- arc.data2sp(HDS_Fixed_tbl)
+
+HDS_Fixed_sf <- st_as_sf(HDS_Fixed_sp, coords = c("longitude", "latitude")) 
+
+HDS_Fixed_sf_4326 <- st_transform(HDS_Fixed_sf, crs = 4326)
+
+HDS_Fixed_sf_3857 <- st_transform(HDS_Fixed_sf, crs = 3857)
+
+### Generic shapefiles for map
+
+Lake_sf <- st_read(here("./shapefiles/GL_Outline", "glgis_gl_shore_noaa_70k.shp")) 
+
+Lake_sf_4326 <- st_transform(Lake_sf, crs = 4326)
+
+Lake_sf_3857 <- st_transform(Lake_sf, crs = 3857)
+
+NY_sf <- st_read(here("./shapefiles/NYS_Civil_Boundaries.shp/NYS_Civil_Boundaries_SHP",  "State_Shoreline.shp"))
+ 
+US_sf <- st_read(here("./shapefiles/States_shapefile", "States_shapefile.shp")) %>% 
+   filter(State_Code %in% c('PA'))
+```
+
+\colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}
+\begin{flushleft}
+\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office}
+\newline
+\large\textbf{Aquatic Invasive Species Program - Early Detection and Monitoring}\vspace{.25cm}
+\newline
+\large\textit{High Priority Location Survey Design:} \Large\textbf{`r params$EDM_HPL`}\vspace{.25cm}
+
+\large\textbf{Overview}
+
+The Lower Great Lakes Fish and Wildlife Conservation Offices Aquatic Invasive Species Program implements a Early Detection and Monitoring (EDM) Program that surveys the lower Great Lakes (Lake Erie and Ontario) for novel aquatic invasive species (AIS). This program is apart of a larger U.S. Fish and Wildlife Service (USFWS) Great Lakes basin-wide strategy with a \textit{Strategic Framework for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates (Bivalves, Gastropods, and Amphipods) in the Great Lakes} identifying early detection as a priority action. Therefore, the programs objective is finding newly introduced AIS early in their invasion where eradication or management efforts are feasible. 
+
+\large\textbf{Survey Design Methodolgoy}
+
+The framework defines how the USFWS will carry out early detection efforts in high priority locations (HPL). HPLs are generally harbors, rivers, embayements, and connecting channels along the Great Lakes that were selected based on their increased likelihood for potential AIS invasion. Survey efforts focus on these HPLs as the result of a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based prioritization framework for AIS in the Great Lakes}. Gear allocation may differ depending on the HPLs phase. Phase 1 HPLs are new locations that have no historic survey data associated with them and therefore are undergoing a 3-year even gear distribution (ex. 33\% electrofish, 33\% fyke net, and 33\% gill net) that will be analysed after that cycle and adjustments may be made for subsequent years. Phase 2 HPLs are locations that have been surveyed for longer than 3-years and there is adequate data to make gear allocation adjustments from an even distribution. However, a phase 2 gear allocation will maintain the ratio for 3-years in which further adjustments may be made after analysis.
+
+Survey location selection is based on a stratified random design with a subset of fixed survey sites. If a HPL has not been surveyed prior, all survey locations are generated randomly with stratification determined by the gears appropriate habitat (shallow, deep, and open water). If a HPL has been surveyed previously and adequate species richness data is available, then 15-20\% of the allocated effort by gear (electrofish, fyke net, gill net, sweep net, and metabarcoding) is conducted at fixed locations. Fixed locations were chosen at sites within an HPL with the highest species diversity as determined by a heat map of species richness which identified those spatial locations. Total amount of effort by gear at an HPL can be found within the `r params$Year` EDM programs implementation plan. 
+
+\large\textbf{Survey Location Maps}
+
+Below are map(s) showing the locations were surveys may occur by their respective gear type. These georeferenced sites will be used by field crews when conducting the surveys.
+
+\end{flushleft}
+
+\fancypagestyle{ContactFooter}{%
+  \fancyhf{}
+  \renewcommand\headrulewidth{0pt}
+  \fancyfoot[L]{Questions related to this survey design can be directed to Zy Biesinger, Aquatic Invasive Species Program Lead, Lower Great Lakes Fish and Wildlife Conservation Office, Phone: 585-948-7046, Email: zy\_biesinger$@$fws.gov}
+}
+\thispagestyle{ContactFooter}
+
+```{r Sample Design Function, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = TRUE}
+
+### Custom CSV Wrapper
+
+write_csv_custom <- function(x, path, append = TRUE, ...) {
+  col_names <- !append
+  if (append) {
+    if (!file.exists(path)) {
+      append <- FALSE
+      col_names <- TRUE
+    }
+  }
+  readr::write_csv(x = x, path = path, append = append, col_names = col_names, ...)
+}
+
+### Sample Design Function w/ Map
+
+function_name <- function(Stratification_Polygon, Sample_Size, Gear_Abbreviation, Gear_Name, Map_Zoom, Map_Title, HPL){
+  
+### Filter spatial dataset by gear
+
+gr <- HPL_sf_4326 %>% 
+  filter(Gear_Type == Stratification_Polygon)
+
+### Generate random sampling locations
+
+gr_points <- st_sample(gr, size = Sample_Size, type = "random") 
+
+### Create a dataframe
+
+gr_df <- st_coordinates(gr_points) %>% 
+  as.data.frame() %>% 
+  mutate(Latitude = Y, Longitude = X) %>%
+  mutate(Point_ID = paste0(Gear_Abbreviation, row_number(), sep = "")) %>% 
+  mutate(High_Priority_Location = HPL, Gear_Type = Gear_Name, Stratification_Category = Stratification_Polygon) %>% 
+  mutate(Method = "Random")
+
+gr_df <- st_as_sf(gr_df, coords = c("X", "Y"), crs = 4326)
+
+### Import and include High Diversity fixed locations
+
+HDS_df <- HDS_Fixed_sf_4326 %>% 
+  filter(Gear_Type == Gear_Name) %>% 
+  select(Latitude, Longitude, Point_ID, High_Priority_Location, Gear_Type, Stratification_Category, Method)
+
+### Export a CSV
+
+csv <- rbind(HDS_df, gr_df) %>% 
+  write_csv_custom(gr_df, path = "..//Sampling Design/Generated_Points/Generated_Random_and_High_Diversity_Fixed_Survey_Points.csv", append = TRUE)
+
+### Find Map Center Point
+
+center <- st_as_sf(gr_df, coords = c('Longitude', 'Latitude')) %>% 
+  st_combine() %>% 
+  st_centroid() %>% 
+  st_coordinates()
+
+### Zoom Level on Map
+
+lon_span <- 360 / 2^Map_Zoom
+lat_span <- 180 / 2^Map_Zoom
+
+lon_bounds <- c(center[1] - lon_span / 2, center[1] + lon_span / 2)
+lat_bounds <- c(center[2] - lat_span / 2, center[2] + lat_span / 2)  
+
+### Generate a map
+
+gr_map <- ggplot() +
+  coord_quickmap() +
+  geom_sf(data = Lake_sf, size = .5, color = "#000000", fill = "#7BC3FF") +
+  geom_sf(data = csv, size = 2, shape = 21, aes(fill = Method), color = "#000000", stroke = 1.25, alpha = .75) +
+  coord_sf(xlim = lon_bounds, ylim = lat_bounds) +
+  geom_text_repel(data = csv, aes(x = Longitude, y = Latitude, label = Point_ID), size = 3.2, point.padding = .7, max.overlaps = Inf) + 
+  annotation_scale(location = "bl", style = "ticks", line_col = "black", text_col = "black") +
+  scale_fill_manual(values = c("#1EB909", "#C81D09")) +
+  labs(title = Map_Title,
+              subtitle = HPL) +
+  theme(
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(colour="black"),
+        axis.text.y=element_text(colour="black"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5),
+        legend.key = element_rect(colour = NA, fill = NA)
+  )
+  
+gr_map
+  
+  }
+
+```
+
+```{r Electrofishing Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$EF_Points>0, fig.cap = paste0("Map showing anticipated electrofishing survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+EF_Sample_Design <- function_name(Stratification_Polygon = "Shallow", Sample_Size = params$EF_Points, Gear_Abbreviation = "EF", Gear_Name = "Electrofishing", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Electrofishing Survey Locations", HPL = params$EDM_HPL)
+
+EF_Sample_Design
+```
+
+```{r Fyke Net Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$FY_Points>0, fig.cap = paste0("Map showing anticipated Fyke Net survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+FY_Sample_Design <- function_name(Stratification_Polygon = "Shallow", Sample_Size = params$FY_Points, Gear_Abbreviation = "FY", Gear_Name = "Fyke Net", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Fyke Net Survey Locations", HPL = params$EDM_HPL)
+
+FY_Sample_Design
+```
+
+```{r Gill Net Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$GN_Points>0, fig.cap = paste0("Map showing anticipated Gill Net survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+GN_Sample_Design <- function_name(Stratification_Polygon = "Deep", Sample_Size = params$GN_Points, Gear_Abbreviation = "GN", Gear_Name = "Gill Net", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Gill Net Survey Locations", HPL = params$EDM_HPL)
+
+GN_Sample_Design
+```
+
+```{r Mini-Fyke Net Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$MF_Points>0, fig.cap = paste0("Map showing anticipated Mini-Fyke Net survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+MF_Sample_Design <- function_name(Stratification_Polygon = "Shallow", Sample_Size = params$MF_Points, Gear_Abbreviation = "MF", Gear_Name = "Mini-Fyke", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Mini-Fyke Net Survey Locations", HPL = params$EDM_HPL)
+
+MF_Sample_Design
+```
+
+```{r Metabarcoding Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$MB_Points>0, fig.cap = paste0("Map showing anticipated Metabarcoding survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+MB_Sample_Design <- function_name(Stratification_Polygon = "Open", Sample_Size = params$MB_Points, Gear_Abbreviation = "MB", Gear_Name = "Metabarcoding", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Metabarcoding Survey Locations", HPL = params$EDM_HPL)
+
+MB_Sample_Design
+```
+
+```{r Sweep Net Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$SN_Points>0, fig.cap = paste0("Map showing anticipated Sweep Net survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+SN_Sample_Design <- function_name(Stratification_Polygon = "Shallow", Sample_Size = params$SN_Points, Gear_Abbreviation = "SN", Gear_Name = "Sweep Net", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Sweep Net Survey Locations", HPL = params$EDM_HPL)
+
+SN_Sample_Design
+```
+
+```{r Rock Bag Sample Design, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'asis', eval = params$RB_Points>0, fig.cap = paste0("Map showing anticipated electrofishing survey locations during the ", params$Year, " field season. Points represent both randomly selected locations (red) and fixed locations (green). The labels indicate the location identifier.", sep = "")}
+
+RB_Sample_Design <- function_name(Stratification_Polygon = "Shallow", Sample_Size = params$RB_Points, Gear_Abbreviation = "RB", Gear_Name = "Rock Bag", Map_Zoom = params$Map_Zoom_Level, Map_Title = "Randomly Selected Rock Bag Survey Locations", HPL = params$EDM_HPL)
+
+RB_Sample_Design
+```
