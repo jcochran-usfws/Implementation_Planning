@@ -45,8 +45,8 @@ metaB <- read_excel(here("data", "metaB_effort.xlsx"))
 \begin{titlepage}
 
 \colorbox{black}{\rlap{\huge\bfseries\textcolor{white}{U.S. Fish \& Wildlife Service}}\hspace{\linewidth}\hspace{-2\fboxsep}}\vspace{.25cm}
-\begin{flushleft}\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office, Aquatic Invasive Species Program}\end{flushleft}\vspace{.25cm}
-\newline
+\begin{flushleft}\large\textbf{Lower Great Lakes Fish and Wildlife Conservation Office, Aquatic Invasive Species Program}
+\end{flushleft}\vspace{.25cm}
 \large\textit{Early Detection Monitoring Implementation Plan, Lake Erie and Lake Ontario `r params$YEAR`}\vspace{.25cm}
 \begin{flushleft}
 
@@ -57,10 +57,10 @@ Aquatic invasive species pose a serious threat to the Great Lakes. That threat h
 ```{r HPL Rank Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
 hpl_tbl <- IP %>% 
-  select(Basin, Location, Fish = Fish.Rank, Invertebrate = Invert.Rank, `Priority*` = Priority) %>% 
+  select(Basin, Location, Fish = Fish_Rank, Purpose, `Priority*` = Priority) %>% 
   arrange(Basin, `Priority*`) %>% 
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority levels of the top ranked locations across the lower Great Lakes.",
-align = 'llccc') %>%
+align = 'llclc') %>%
   kable_styling(latex_options = "hold_position") %>%
   add_header_above(c(" " = 2, "Ranking out of 386 Locations" = 2, " " = 1)) %>%
   kable_styling(latex_options = c("repeat_header")) %>% 
@@ -69,6 +69,7 @@ align = 'llccc') %>%
   column_spec(1, bold=T) %>% 
   #kable_styling(latex_options = "striped") %>%
   collapse_rows(1, latex_hline = "major", valign = "top") %>% 
+  collapse_rows(4, latex_hline = "major", valign = "top") %>%
   footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework (fish and invertebrate), supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
 
 hpl_tbl
@@ -186,19 +187,21 @@ The amount of eDNA sample effort for each of the projects listed above can be fo
 
 ```{r Metabarcoding Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
-metaB_tbl <- metaB %>% 
-  arrange(Project) %>% 
-  rename(`Sample #*` = Sample_Number) %>% 
+metaB_tbl <- metaB %>%
+  select(Basin, Location, Purpose, Priority, Metabarcoding_fws, Target_Species) %>% 
+  arrange(Basin, Purpose) %>% 
+  rename(`Sample #*` = Metabarcoding_fws, `Target Species` = Target_Species) %>% 
   adorn_totals() %>% 
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Number of eDNA samples that will be allocated to each project.",
-align = 'llcl') %>%
+align = 'lllccl') %>%
   kable_styling(latex_options = "hold_position") %>%
   kable_styling(latex_options = c("repeat_header")) %>% 
   kable_styling(full_width = FALSE) %>%
   kable_styling(font_size = 10) %>%
   #column_spec(1, bold=T) %>% 
   collapse_rows(1, latex_hline = "major", valign = "top") %>% 
-  footnote(symbol  = "Samples refer to 5 µm PES filters of which 10% will be designated as field blank controls.", threeparttable = T) 
+  collapse_rows(3, latex_hline = "major", valign = "top") #%>% 
+  #footnote(symbol  = "Samples refer to 5 µm PES filters of which 10% will be designated as field blank controls.", threeparttable = T) 
 
 metaB_tbl
 ```
@@ -210,23 +213,22 @@ metaB_tbl
 ```{r Projected Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
 efta_tbl <- IP %>% 
-  select(Basin, Location, Electrofish, Fyke.Net, Gill.Net, Metabarcoding, Rock.Bags, Sweep.Net) %>% 
+  select(Basin, Location, Purpose, Electrofish, `Fyke Net`, `Gill Net`, Metabarcoding) %>% 
   arrange(Basin) %>% 
-  rename(`Fyke Net` = Fyke.Net, `Gill Net` = Gill.Net, `Rock Bags` = Rock.Bags, `Sweep Net` = Sweep.Net) %>% 
   adorn_totals() %>% 
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Amount of effort proposed for each high priority location for Juvenile/Adult fish, Metabarcoding, and Benthic Invertebrates.",
-align = 'llccccccc') %>%
+align = 'llcccc') %>%
   kable_styling(latex_options = "hold_position") %>%
-  add_header_above(c(" " = 2, "Fish Surveys" = 4, "Invertebrate Surveys" = 2)) %>%
+  add_header_above(c(" " = 3, "Fish Surveys" = 4)) %>%
   kable_styling(latex_options = c("repeat_header")) %>% 
   kable_styling(full_width = FALSE) %>%
   kable_styling(font_size = 12) %>%
   column_spec(1, bold=T) %>% 
   #kable_styling(latex_options = "striped") %>%
-  collapse_rows(1, latex_hline = "major", valign = "top") #%>% 
+  collapse_rows(1, latex_hline = "major", valign = "top") %>% 
+  collapse_rows(3, latex_hline = "major", valign = "top") #%>%
   #footnote(symbol  = "Priority designation was assigned based on rankings (fish and invertebrate), supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
 
 efta_tbl
-
 ```
 \elandscape
