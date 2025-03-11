@@ -57,8 +57,9 @@ Aquatic invasive species pose a serious threat to the Great Lakes. That threat h
 ```{r HPL Rank Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
 hpl_tbl <- IP %>% 
-  select(Basin, Location, Fish = Fish_Rank, Purpose, `Priority*` = Priority) %>% 
+  select(Basin, Location, Fish = Fish_Rank, Purpose,`Priority*` = Priority) %>% 
   arrange(Basin, `Priority*`) %>% 
+  filter(Purpose == "Early Detection Monitoring") %>%
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Priority levels of the top ranked locations across the lower Great Lakes.",
 align = 'llclc') %>%
   kable_styling(latex_options = "hold_position") %>%
@@ -70,7 +71,7 @@ align = 'llclc') %>%
   #kable_styling(latex_options = "striped") %>%
   collapse_rows(1, latex_hline = "major", valign = "top") %>% 
   collapse_rows(4, latex_hline = "major", valign = "top") %>%
-  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework (fish and invertebrate), supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
+  footnote(symbol  = "Priority designation was assigned based on rankings from the risk-based prioritization framework, supporting ongoing invasion fronts, and other AIS program objectives.", threeparttable = T) 
 
 hpl_tbl
 ```
@@ -82,13 +83,13 @@ This report outlines implementation of the field elements of the Framework in La
 ## Read in shapefiles
 
  Lake_sf <- st_read(here("shapefiles/GL_Outline", "glgis_gl_shore_noaa_70k.shp"))
- cropped <- st_crop(Lake_sf, xmin = -73, xmax = -81,
-                                    ymin = 41.5, ymax = 45.4)
+ cropped <- st_crop(Lake_sf, xmin = -74, xmax = -81,
+                                    ymin = 41, ymax = 45.4)
  NY_sf <- st_read(here("shapefiles/NYS_Civil_Boundaries.shp/NYS_Civil_Boundaries_SHP",  "State_Shoreline.shp"))
  
  US_sf <- st_read(here("shapefiles/States_shapefile", "States_shapefile.shp")) %>% 
    filter(State_Code %in% c('PA'))
- #US_cropped <- st_crop(US_sf, xmin = -73, xmax = -81, ymin = 41.5, ymax = 45.4)
+ #US_cropped <- st_crop(US_sf, xmin = -73, xmax = -81, ymin = 42, ymax = 45.4)
  
  ## Create Sampling Locations
 
@@ -112,21 +113,20 @@ sites <- st_as_sf(points, coords = c("x", "y"), crs = 4326, agr = "constant")
 
 \large\textbf{General Objectives}
 
-The objective of the framework is early detection; therefore, sampling strategies are designed to detect rare or low abundance species. Generally, sampling for rare species involves collecting the entire suite of species known to inhabit a location using a variety of gear types that sample multiple habitats and depth strata. The objective of this implementation plan is to execute a multi-gear sampling strategy that maximizes the potential for detecting a newly introduced fish or benthic macroinvertebrate species in a complex aquatic system while it is still rare and geographically restricted. This surveillance strategy uses both traditional (active and passive fisheries gear) and genetic (eDNA) methods to identify species presence across the various communities.
+The objective of the framework is early detection; therefore, sampling strategies are designed to detect rare or low abundance species. Generally, sampling for rare species involves collecting the entire suite of species known to inhabit a location using a variety of gear types that sample multiple habitats and depth strata. The objective of this implementation plan is to execute a multi-gear sampling strategy that maximizes the potential for detecting a newly introduced fish species in a complex aquatic system while it is still rare and geographically restricted. This surveillance strategy uses both traditional (active and passive fisheries gear) and genetic (eDNA) methods to identify species presence across the various communities.
 
-During the `r params$YEAR` early detection monitoring field season, water bodies near the following locations will be surveyed (Figure 1): `r combine_words(IP$Location)`. The total proposed units of effort for juvenile/adult fish, metabarcoding, and benthic invertebrate sampling by each survey location can be found in Table 3. Gear will be used in accordance with the \textit{Recommended Sampling Gear Types and Standard Operating Procedures for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes} and will also follow safety and operation procedures implemented by the USFWS.  
+During the `r params$YEAR` early detection monitoring field season, water bodies near the following locations will be surveyed (Figure 1): `r unique(IP$Location)`. The total proposed units of effort for juvenile/adult fish and metabarcoding sampling by each survey location can be found in Table 3. Gear will be used in accordance with the \textit{Recommended Sampling Gear Types and Standard Operating Procedures for the Early Detection of Non-native Fishes and Select Benthic Macroinvertebrates in the Great Lakes} and will also follow safety and operation procedures implemented by the USFWS.  
 
-
-```{r Implementation Plan Site Location Map, echo=FALSE, results ='asis', message=FALSE, error=FALSE, warning=FALSE, fig.align="center", out.width = '85%', fig.cap=paste("Locations for fish and invertebrate AIS surveys for the", params$YEAR, "field season.", sep = " ")} 
+\clearpage
+\blandscape
+```{r Implementation Plan Site Location Map, echo=FALSE, results ='asis', message=FALSE, error=FALSE, warning=FALSE, fig.height=7.5, fig.width=9.5, fig.align="center", fig.cap=paste("Locations for fish AIS surveys for the", params$YEAR, "field season.", sep = " ")} 
  
 ## Plot Implementation Plan location map
  
 IP_map <- ggplot() + 
   geom_sf(data = cropped, size = .5, color = "grey60") +
-  geom_sf(data = NY_sf, size = .5, color = "grey60", fill = NA) +
-  geom_sf(data = US_sf, size = .5, color = "grey60", fill = NA) +
-  geom_sf(data = sites, size = 3.75, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
-  geom_text_repel(data = points, aes(x = x, y = y, label = Location), size = 3.2, point.padding = .7, max.overlaps = Inf) + 
+  geom_sf(data = sites, size = 2.75, shape = 21, fill = "red3", color = "red1", stroke = 1.25, alpha = .5) +
+  geom_text_repel(stat = 'unique', data = points, aes(x = x, y = y, label = Location), size = 3.55, point.padding = .7, max.overlaps = Inf) + 
   annotate(geom = "text", x = -78.1, y = 43.65, label = "Lake Ontario", 
     fontface = "italic", color = "grey60", size = 3) +
   annotate(geom = "text", x = -79.59, y = 42.65, label = "Lake Erie", 
@@ -149,18 +149,19 @@ IP_map <- ggplot() +
 IP_map
  
 ```
+\elandscape
 
 \clearpage
 
 \large\textbf{Traditional Surviellance Efforts}
 
-Starting in 2023, the USFWS Great Lakes Early Detection Monitoring program has undergone a review process that resulted in a standardized protocol for conducting broad-spectrum AIS surveillance at HPLs. This process has phases which focus on maintaining consistency in decision-making and gear allocation which will be analyzed to optimize adaptive sampling regimes for each location. Phase 1 describes a consistent 3-year sampling regime for new HPLs that have not previously been surveyed traditionally. None of the HPLs outlined in this plan fall into the phase 1 category, however, to build a baseline in which ongoing HPL surveillance can be analyzed under the protocol, a consistent 3-year sampling regime will be implemented from 2024-2026. During this 3-year sampling regime, a modified random site selection process that has 15% of sites in historically species rich habitats, as determined by historical data, will be implemented across all locations. Gear allocation for fish surveillance will be distributed roughly 80/20 between littoral and benthic habitats with gear allocation ratios being maintained during the 3-year sampling regime. Invertebrate surveillance gear allocation will be split 50/50 between the two gear types (rock bags and sweep net) and also held constant during the 3-year sampling regime. Following the 3-year sampling regime, comparative analyses will be used to compare past sampling strategies. Metrics of success, which are still be developed through the review process, will also be applied to the 3-year sampling regime. Results from these analyses will be used to manipulate the site selection and gear allocation strategy to better optimize broad-spectrum AIS surveillance for each HPL.               
+Starting in 2023, the USFWS Great Lakes Early Detection Monitoring program has undergone a review process that resulted in a standardized protocol for conducting broad-spectrum AIS surveillance at HPLs. This process has phases which focus on maintaining consistency in decision-making and gear allocation which will be analyzed to optimize adaptive sampling regimes for each location. Phase 1 describes a consistent 3-year sampling regime for new HPLs that have not previously been surveyed traditionally. None of the HPLs outlined in this plan fall into the phase 1 category, however, to build a baseline in which ongoing HPL surveillance can be analyzed under the protocol, a consistent 3-year sampling regime will be implemented from 2024-2026. During this 3-year sampling regime, a modified random site selection process that has 15% of sites in historically species rich habitats, as determined by historical data, will be implemented across all locations. Gear allocation for fish surveillance will be distributed roughly 80/20 between littoral and benthic habitats with gear allocation ratios being maintained during the 3-year sampling regime. Following the 3-year sampling regime, comparative analyses will be used to compare past sampling strategies. Metrics of success, which are still being developed through the review process, will also be applied to the 3-year sampling regime. Results from these analyses will be used to manipulate the site selection and gear allocation strategy to better optimize broad-spectrum AIS surveillance for each HPL.               
 
 Alongside the standard routine surveillance efforts of our early detection monitoring program, there are a few projects that will be undertaken that are worth mentioning:
 \begin{enumerate}
-\item Surveillance efforts along the St. Lawrence River near Massena, NY will be ongoing as Tench (\textit{Tinca tinca}) continue to undergo a range expansion into the upper St. Lawrence River. This effort is targeted towards littoral habitats that have been suggested to be preferred by Tench and therefore will not be subscribed to the 3-year sampling regime. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front.  
+\item Surveillance efforts along the St. Lawrence River near Massena, NY will be ongoing as Tench (\textit{Tinca tinca}) continue to undergo a range expansion into the upper St. Lawrence River. This work is a product of a binational working group focused on tench detentions initiated through the Great Lakes Fish Commission. Partners include: New York State, St. Regis Mowhawk Tribe, DFO, McGill University, The River Institute, and Quebec Ministry of Natural Resources and Forests. This effort is targeted towards littoral habitats that have been suggested to be preferred by Tench and therefore will not be subscribed to the 3-year sampling regime. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front.
 
-\item Although there will not be any dedicated crayfish survey effort, further support of the Buffalo Park Schools Red Swamp Crayfish (\textit{Procambarus clarkii}) infestation will result in a few days of effort around the perimeter of the known established population to determine any potential spread.  
+\item Although there will not be any dedicated crayfish or benthic invertebrate survey effort, further support of the Buffalo Park Schools Red Swamp Crayfish (\textit{Procambarus clarkii}) infestation will result in a few days of effort around the perimeter of the known established population to determine any potential spread.  
 \end{enumerate}
 
 \large\textbf{Genetic Surviellance Efforts}
@@ -175,16 +176,10 @@ Begin to implement eDNA metabarcoding as a surveillance method for novel AIS at 
 \newline
 Supporting Tench range expansion objectives in the St. Lawrence River using eDNA metabarcoding to detect Tench DNA above the final lock and dam upstream to Lake Ontario. This work will be supported through partnerships with Department of Fisheries and Oceans Canada (DFO) and the USFWS Ecological Services New York Field Office (NYFO).  
 
-\normalsize\textbf{Metabarcoding Methods Research}
-\newline
-Understanding contamination risk when conducting eDNA sampling is an important aspect to implementing defensible collection methods. Ideally, collecting eDNA samples from a vessel that is also concurrently conducting traditional surveys would be an efficient way to combine techniques but contamination in this "dirty" boat environment is a concern. This small scale study will use eDNA field blanks collected from non-sterile boats to determine the amount of contamination risk is associated with sampling from "dirty" vessels.  
-
-\normalsize\textbf{Detroit River Metabarcoding Reasearch}
-\newline
-This effort will be in support of continued research objectives with the Detroit River substation in the Detroit River addressing questions of eDNA in a large connecting channel.
-
 The amount of eDNA sample effort for each of the projects listed above can be found in table 2. Metabarcoding effort associated with routine broad-spectrum surveillance at lower priority HPLs are also outlined in Table 3.
 
+\clearpage
+\blandscape
 ```{r Metabarcoding Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
 metaB_tbl <- metaB %>%
@@ -205,11 +200,10 @@ align = 'lllccl') %>%
 
 metaB_tbl
 ```
+\elandscape
 
 \clearpage
 \blandscape
-\large\textbf{Proposed Priority Location Surviellance Efforts}
-\newline
 ```{r Projected Effort Table, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE}
 
 efta_tbl <- IP %>% 
