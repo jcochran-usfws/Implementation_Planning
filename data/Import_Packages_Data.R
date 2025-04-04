@@ -24,11 +24,11 @@ ipak(requiredPackages)
 
 ### Data and File Import
 
-IP <- read_excel("../data/projected_effort.xlsx", sheet = 1) %>% 
+IP <- read_excel(here('data', 'projected_effort.xlsx')) %>% 
   mutate(., Priority = factor(Priority, levels = c("High", "Moderate", "Low"))) %>% 
   mutate(., Basin = factor(Basin, levels = c("Lake Erie", "Lake Ontario")))
 
-metaB <- read_excel("../data/metaB_effort.xlsx", sheet = 1) %>%  
+metaB <- read_excel(here('data', 'metaB_effort.xlsx')) %>%  
   mutate(., Priority = factor(Priority, levels = c("High", "Moderate", "Low"))) %>% 
   mutate(., Basin = factor(Basin, levels = c("Lake Erie", "Lake Ontario")))
 
