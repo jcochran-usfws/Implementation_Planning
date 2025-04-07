@@ -40,7 +40,28 @@ source(here::here('data', 'Import_Packages_Data.R'))
 
 Aquatic invasive species (AIS) pose a serious threat to the Great Lakes. Prevention, early detection, and rapid response provide the most effective and potentially successful means to minimize harm to the environment and costs associated with stopping the spread of nonnative species. The U.S. Fish and Wildlife Service (USFWS) developed the Strategic Framework for the Early Detection of Non-native Fishes in the Great Lakes identifying early detection as a priority action. The objective of the Early Detection and Monitoring (EDM) program is to detect novel invasive species and document AIS range expansions while populations are low and geographically isolated - providing management actions a better opportunity of success. 
 
-**All yours Colleen!**
+\large\textbf{Metabarcoding Implementation}
+
+Along with traditional fisheries surveys (electrofishing and netting), molecular surveillance using environmental DNA (eDNA) has proven to be a valuable tool in AIS monitoring. Metabarcoding, a multi-taxa eDNA method, now allows for fish community level surveillance across a broad range of species, both native, non-native, and AIS watchlist. The USFWS will be implementing an annual metabarcoding AIS surveillance program that will monitor both broad-spectrum AIS watchlist species and targeted species-specific AIS of interest. Objectives for both surveillance purposes are defined as follows:
+
+\begin{itemize}
+\item\textbf{Broad-Spectrum:} Monitoring will focus on AIS watchlist species across high priority locations (HPLs) comprised of harbors, rivers and embayments of the lower Great Lakes as determined by a harbors, rivers, and embayments of the Great Lakes as determined by a \href{https://cfpub.epa.gov/si/si_public_record_Report.cfm?dirEntryId=350136&Lab=CCTE}{risk-based            prioritization framework for Aquatic Invasive Species (AIS) in the Great Lakes basin} (Figure 1). Highest priority HPLs will     get the largest sample efforts, with sample allocations trickling down across the other lower ranked priority sites (Table 1). 
+\item\textbf{Species-Specific:} Monitoring will also focus on particular AIS species while still employing a multi-taxa approach.
+\begin{itemize}
+\item\textbf{Tench} (\textit{Tinca tinca}), an Eurasian cyprinid, will have continued eDNA monitoring along the invasion front in the Massena, NY region of St. Lawrence River. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front. 
+\item\textbf{Grass Carp} (\textit{Ctenopharyngodon idella}), an Asian cyprinid, will have continued and expanded effort across areas within Lake Ontario and Eastern Lake Erie. Sampling areas were selected based off high priority designation and locations that had habitat conditions preferred by grass carp.
+\end{itemize}
+\end{itemize}
+
+\large\textbf{2025 Partnership Involvement}
+
+In 2025 the Lower Great Lakes Fish and Wildlife Conservation Office (LGLFWCO) is looking for partners to assist in metabarcoding sample collection. Locations requiring assistance along with number of samples to be collected by partners can be found in Table 1. Partners should review the tables and determine if they have capacity to assist and if any of the locations selected are of interest to their office for AIS or other species purposes. Data from samples collected by partners will be shared when data is available.
+
+If partners have interest in other water bodies in the Great Lakes basin for AIS those areas could potentially be sampled if they align with the LGLFWCOs EDM programmatic goals. If there are additional partner requests the LGLFWCO will review those requests, determine if the areas requested align with programmatic objectives, and readjust sample allocations as needed. Extra areas requested that are not selected for sampling this year can be re-evaluated for future years sampling.
+
+For partners willing to assist with sampling efforts in 2025, the LGLFWCO will provide materials for collection, including: filters, a smith-root sampling unit, and a step by step field SOP. Training opportunities can also be provided if requested. A Field Map and Survey123 form have already been set up for this program and will be utilized for sample collection. A copy of the SOP for the current data workflow can be found here: \href{https://fws.maps.arcgis.com/home/item.html?id=050217d0979e4fbdac761d660023a4e2}{eDNA Projects Survey123 Form User Instructional Manual}
+
+\end{flushleft}
 
 \newpage
 
