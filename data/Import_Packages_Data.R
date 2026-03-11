@@ -25,18 +25,19 @@ ipak(requiredPackages)
 ### Data and File Import
 
 IP <- read_excel(here('data', 'projected_effort.xlsx')) %>% 
-  mutate(., Priority = factor(Priority, levels = c("High", "Moderate", "Low"))) %>% 
+  mutate(., Priority = factor(Priority, levels = c("High", "Medium", "Low"))) %>% 
   mutate(., Basin = factor(Basin, levels = c("Lake Erie", "Lake Ontario")))
 
 metaB <- read_excel(here('data', 'metaB_effort.xlsx'), sheet = "metaB_effort") %>%  
-  mutate(., Priority = factor(Priority, levels = c("High", "Moderate", "Low"))) %>% 
+  mutate(., Priority = factor(Priority, levels = c("High", "Medium", "Low"))) %>% 
   mutate(., Basin = factor(Basin, levels = c("Lake Erie", "Lake Ontario")))
 
 partnerB <- read_excel(here('data', 'metaB_effort.xlsx'), sheet = "Partner_effort") %>%  
-  mutate(., Priority = factor(Priority, levels = c("High", "Moderate", "Low"))) %>% 
+  mutate(., Priority = factor(Priority, levels = c("High", "Medium", "Low"))) %>% 
   mutate(., Basin = factor(Basin, levels = c("Lake Erie", "Lake Ontario")))
 
-Lake_sf <- st_read(here("shapefiles/GL_Outline", "glgis_gl_shore_noaa_70k.shp"))
+Lake_sf <- st_read(here("shapefiles/GL_Outline", "GreatLakesStLawrence.shp"))
+
 cropped <- st_crop(Lake_sf, xmin = -73, xmax = -81,
                    ymin = 41.5, ymax = 45.4)
 

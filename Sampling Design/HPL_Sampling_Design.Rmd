@@ -14,16 +14,16 @@ output:
     df_print: paged
     
 params:
-  Year: 2024
-  EDM_HPL: "Grand Island, NY"
-  EF_Points: 20
-  FY_Points: 20
+  Year: 2026
+  EDM_HPL: "Lake St. Francis, NY/ON"
+  EF_Points: 0
+  FY_Points: 0
   MF_Points: 0
   GN_Points: 0
-  MB_Points: 20
+  MB_Points: 30
   RB_Points: 0
   SN_Points: 0
-  Map_Zoom_Level: 9.95 # Reference: Oswego, NY (12.75), Erie, PA (11.55), Buffalo, NY (10.45), North Tonawanda, NY (10.55), Sodus Point, NY (11.10), Rochester, NY (?), Grand Island, NY (9.95) 
+  Map_Zoom_Level: 10.35 # Reference: Oswego, NY (12.75), Erie, PA (11.55), Buffalo, NY (10.45), North Tonawanda, NY (10.55), Sodus Bay, NY (11.10), Rochester, NY (9.95), Upper Niagara River, NY/ON (9.95), Black River Bay, NY (10.75)
 ---
 
 ```{r Package Install and Import, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'hide'}
@@ -84,7 +84,19 @@ HDS_Fixed_sf_3857 <- st_transform(HDS_Fixed_sf, crs = 3857)
 
 ### Generic shapefiles for map
 
-Lake_sf <- st_read(here("./shapefiles/GL_Outline", "glgis_gl_shore_noaa_70k.shp")) 
+Lake_sf_line <- st_read(here("./shapefiles/GL_Outline_old", "glgis_gl_shore_noaa_70k.shp")) 
+
+Lake_sf_poly <- st_read(here("shapefiles/GL_Outline", "GreatLakesStLawrence.shp"))
+
+Lake_sf_polyline <- st_cast(Lake_sf_poly, "MULTILINESTRING")
+
+Lake_sf <- st_cast(Lake_sf_polyline, "LINESTRING")
+
+Lake_sf_valid <- st_make_valid(Lake_sf)
+
+Lake_sf <- st_cast(Lake_sf_valid, "LINESTRING")
+  
+####
 
 Lake_sf_4326 <- st_transform(Lake_sf, crs = 4326)
 

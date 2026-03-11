@@ -77,6 +77,8 @@ align = 'llclc') %>%
 hpl_tbl
 ```
 
+\newpage 
+
 This report outlines implementation of the field elements of the Framework in Lake Erie and Lake Ontario during `r params$YEAR`. The proposed work will be carried out by the USFWS's Lower Great Lakes Fish and Wildlife Conservation Office (LGLFWCO).
 
 ```{r Map Prep, message=FALSE, error=FALSE, warning=FALSE, echo= FALSE, results='hide'}
@@ -161,6 +163,7 @@ Starting in 2023, the USFWS Great Lakes Early Detection Monitoring program has u
 Alongside the standard routine surveillance efforts of our early detection monitoring program, there are a few projects that will be undertaken that are worth mentioning:
 \begin{enumerate}
 \item Surveillance efforts along the St. Lawrence River near Massena, NY will be ongoing as Tench (\textit{Tinca tinca}) continue to undergo a range expansion into the upper St. Lawrence River. This work is a product of a binational working group focused on tench detentions initiated through the Great Lakes Fish Commission. Partners include: New York State Department of Environmental Conservation, St. Regis Mowhawk Tribe, Department of Fisheries and Oceans Canada, McGill University, The River Institute, and Quebec Ministry of Natural Resources and Forests. This effort is targeted towards littoral habitats that have been suggested to be preferred by Tench and therefore will not be subscribed to the 3-year sampling regime. Massena, NY maintains a High priority status due to the range expansion of Tench and binational partner interest in monitoring that invasion front.
+\end{enumerate}
 
 \large\textbf{Genetic Surviellance Efforts}
 
@@ -185,6 +188,7 @@ metaB_tbl <- metaB %>%
   arrange(Basin, Purpose) %>% 
   rename(`Sample #*` = Metabarcoding_fws, `Target Species` = Target_Species) %>% 
   adorn_totals() %>% 
+  filter(`Sample #*` > 0) %>% 
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Number of eDNA samples that will be allocated to each project.",
 align = 'lllccl') %>%
   kable_styling(latex_options = "hold_position") %>%
@@ -208,6 +212,7 @@ efta_tbl <- IP %>%
   select(Basin, Location, Purpose, Electrofish, `Fyke Net`, `Gill Net`, Metabarcoding) %>% 
   arrange(Basin) %>% 
   adorn_totals() %>% 
+  filter(`Electrofish` > 0 | `Fyke Net` > 0 | `Gill Net` > 0 | `Metabarcoding` > 0) %>% 
   kable(., format = "latex", digits = 2, booktabs = TRUE, longtable = FALSE, caption = "Amount of effort proposed for each high priority location for Juvenile/Adult fish, Metabarcoding, and Benthic Invertebrates.",
 align = 'llcccc') %>%
   kable_styling(latex_options = "hold_position") %>%
