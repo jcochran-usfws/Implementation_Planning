@@ -23,7 +23,7 @@ params:
   MB_Points: 30
   RB_Points: 0
   SN_Points: 0
-  Map_Zoom_Level: 10.35 # Reference: Oswego, NY (12.75), Erie, PA (11.55), Buffalo, NY (10.45), North Tonawanda, NY (10.55), Sodus Bay, NY (11.10), Rochester, NY (9.95), Upper Niagara River, NY/ON (9.95), Black River Bay, NY (10.75)
+  Map_Zoom_Level: 10 # Reference: Oswego, NY (12.75), Erie, PA (11.55), Buffalo, NY (10.45), North Tonawanda, NY (10.55), Sodus Bay, NY (11.10), Rochester, NY (9.95), Upper Niagara River, NY/ON (9.95), Black River Bay, NY (10.75)
 ---
 
 ```{r Package Install and Import, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'hide'}
@@ -31,7 +31,6 @@ params:
 ## Install and load packages
 
 # Create vector of packages
-
 requiredPackages <- c("tidyverse", "lubridate", "janitor", "arcgisbinding", "sf", "sp", "pbapply", "spatialEco", "ggspatial", "ggrepel", "ggmap", "here", "units", "sfheaders", "rnaturalearth", "ggmap", "basemaps", "arcgis")
 
 # Function to install and load any packages not installed
@@ -46,6 +45,7 @@ ipak <- function(pkg){
 # Load packages
 
 ipak(requiredPackages)
+
 ```
 
 ```{r Import Shapefile Layer, echo=FALSE, message=FALSE, error=FALSE, warning=FALSE, results = 'hide', cache=FALSE}
@@ -65,8 +65,12 @@ HPL_sp <- arc.data2sp(HPL_Stratified_tbl)
 HPL_sf <- st_as_sf(HPL_sp, coords = c("longitude", "latitude")) 
 
 HPL_sf_4326 <- st_transform(HPL_sf, crs = 4326)
+HPL_sf_4326 = st_make_valid(HPL_sf_4326)
+#summary(st_is_valid(HPL_sf_4326))
 
 HPL_sf_3857 <- st_transform(HPL_sf, crs = 3857)
+HPL_sf_3857 = st_make_valid(HPL_sf_3857)
+#summary(st_is_valid(HPL_sf_3857))
 
 ### High Diversity Fixed Survey Sites
 
@@ -95,7 +99,7 @@ Lake_sf <- st_cast(Lake_sf_polyline, "LINESTRING")
 Lake_sf_valid <- st_make_valid(Lake_sf)
 
 Lake_sf <- st_cast(Lake_sf_valid, "LINESTRING")
-  
+
 ####
 
 Lake_sf_4326 <- st_transform(Lake_sf, crs = 4326)
